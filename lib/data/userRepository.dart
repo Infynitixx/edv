@@ -5,7 +5,7 @@ import 'package:edv/model/user.dart';
 
 class UserRepository {
   Future<List<User>> fetchUsers() async {
-    var response = await http.get(Uri.parse('http://172.16.0.162/api/user'));
+    var response = await http.get(Uri.parse('http://192.168.178.107/api/user'));
 
     List<User> users = [];
 
@@ -17,5 +17,23 @@ class UserRepository {
       }
     }
     return users;
+  }
+
+  Future<User> createUser(User newUser) async {
+    var url = Uri.parse('https://eoet0ncq43aokkb.m.pipedream.net');
+
+    var response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(newUser.toJson()),
+    );
+
+    if (response.statusCode == 201) {
+      var createdUserJson = json.decode(response.body);
+      var createdUser = User.fromJson(createdUserJson);
+      return createdUser;
+    } else {
+      throw Exception('Failed to create user');
+    }
   }
 }

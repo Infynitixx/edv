@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:edv/screens/userViewModel.dart';
+import 'package:edv/screens/groupViewModel.dart';
 import 'package:edv/model/user.dart';
 import 'package:edv/ui/listItem.dart';
+import 'package:edv/ui/detailRow.dart';
+import 'package:edv/ui/AddDataPopup.dart';
+import 'package:edv/data/userRepository.dart';
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -11,27 +15,39 @@ class UserScreen extends StatefulWidget {
 }
 
 class _UserScreenState extends State<UserScreen> {
-  late final UserViewModel _viewModel;
+  late final UserViewModel _userViewModel;
+  late final GroupViewModel _groupViewModel;
+
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
   @override
   void initState() {
     super.initState();
-    _viewModel = UserViewModel();
-    _viewModel.addListener(_onViewModelChanged);
-    _viewModel.loadUsers();
+    _userViewModel = UserViewModel();
+    _userViewModel.addListener(_onUserViewModelChanged);
+    _userViewModel.loadUsers();
+
+    _groupViewModel = GroupViewModel();
+    _groupViewModel.addListener(_onGroupViewModelChanged);
+    _groupViewModel.loadGroups();
+
     _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    _viewModel.removeListener(_onViewModelChanged);
+    _userViewModel.removeListener(_onUserViewModelChanged);
+    _groupViewModel.removeListener(_onGroupViewModelChanged);
     _searchController.removeListener(_onSearchChanged);
     super.dispose();
   }
 
-  void _onViewModelChanged() {
+  void _onUserViewModelChanged() {
+    setState(() {});
+  }
+
+  void _onGroupViewModelChanged() {
     setState(() {});
   }
 
@@ -43,9 +59,10 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final filteredUsers = _viewModel.users.where((user) =>
+    final filteredUsers = _userViewModel.users.where((user) =>
     user.vorname.toLowerCase().contains(_searchTerm.toLowerCase()) ||
-        user.nachname.toLowerCase().contains(_searchTerm.toLowerCase())).toList();
+        user.nachname.toLowerCase().contains(_searchTerm.toLowerCase()))
+        .toList();
 
     return Scaffold(
       backgroundColor: Color(0xFF212121),
@@ -57,120 +74,105 @@ class _UserScreenState extends State<UserScreen> {
           Expanded(
             child: ListView.builder(
               itemBuilder: (context, index) {
-                return ListItem( // Verwende die ListItem Klasse
-                  title: 'Titel $index',
-                  subtitle: 'Untertitel $index',
-                  onTap: () => print('Item $index tapped'),
+                return ListItem(
+                  title: filteredUsers[index].vorname,
+                  subtitle: filteredUsers[index].nachname,
+                  onTap: () => _showUserDetails(filteredUsers[index]),
                 );
               },
               itemCount: filteredUsers.length,
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(16),
-            color: Color(0xFF424242),
-            child:
-            TextField(
-              controller:
-              _searchController,
-              decoration:
-              InputDecoration(
-                hintText:
-                'Suche...',
-                fillColor:
-                Colors.white,
-                filled:
-                true,
-                border:
-                OutlineInputBorder(
-                  borderRadius:
-                  BorderRadius.circular(24),
-                  borderSide:
-                  BorderSide.none,
+          Padding(
+            padding: EdgeInsets.only(left: 16, right: 96, bottom: 16),
+            child: Container(
+              color: Color(0xFF212121),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Suche...',
+                  fillColor: Colors.white,
+                  filled: true,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddUserPopup(),
+        child: Icon(Icons.add),
+      ),
     );
   }
+
   void _showUserDetails(User user) {
     showModalBottomSheet(
       context: context,
       builder: (context) =>
           Container(
             color: Color(0xFF424242),
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(32),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  Expanded(child:
-                  Text('Vorname:', style:
-                  TextStyle(fontSize: 14, color: Colors.white))),
-                  Expanded(child:
-                  Text(user.vorname, style:
-                  TextStyle(fontSize: 18, color: Colors.white))),
-                ]),
-                SizedBox(height: 8),
-                Row(children: [
-                  Expanded(child:
-                  Text('Nachname:', style:
-                  TextStyle(fontSize: 14, color: Colors.white))),
-                  Expanded(child:
-                  Text(user.nachname, style:
-                  TextStyle(fontSize: 18, color: Colors.white))),
-                ]),
-                SizedBox(height: 8),
-                Row(children: [
-                  Expanded(child:
-                  Text('Anmeldename:', style:
-                  TextStyle(fontSize: 14, color: Colors.white))),
-                  Expanded(child:
-                  Text(user.anmeldename, style:
-                  TextStyle(fontSize: 18, color: Colors.white))),
-                ]),
-                SizedBox(height: 8),
-                Row(children: [
-                  Expanded(child:
-                  Text('Status:', style:
-                  TextStyle(fontSize: 14, color: Colors.white))),
-                  Expanded(child:
-                  Text('${user.status}', style:
-                  TextStyle(fontSize: 18, color: Colors.white))),
-                ]),
-                SizedBox(height: 8),
-                Row(children: [
-                  Expanded(child:
-                  Text('Gruppenzugehörigkeit:', style:
-                  TextStyle(fontSize: 14, color: Colors.white))),
-                  Expanded(child:
-                  Text(user.adGruppen, style:
-                  TextStyle(fontSize: 18, color: Colors.white))),
-                ]),
-                SizedBox(height: 8),
-                Row(children: [
-                  Expanded(child:
-                  Text('Verwendung:', style:
-                  TextStyle(fontSize: 14, color: Colors.white))),
-                  Expanded(child:
-                  Text(user.verwendung, style:
-                  TextStyle(fontSize: 18, color: Colors.white))),
-                ]),
-                SizedBox(height: 8),
-                Row(children: [
-                  Expanded(child:
-                  Text('Adresse:', style:
-                  TextStyle(fontSize: 14, color: Colors.white))),
-                  Expanded(child:
-                  Text(user.adresse, style:
-                  TextStyle(fontSize: 18, color: Colors.white))),
-                ]),
+                DetailRow.buildDataRow('Vorname:', user.vorname),
+                DetailRow.buildSeparator(),
+                DetailRow.buildDataRow('Nachname:', user.nachname),
+                DetailRow.buildSeparator(),
+                DetailRow.buildDataRow('Anmeldename:', user.anmeldename),
+                DetailRow.buildSeparator(),
+                DetailRow.buildDataRow('Status:', '${user.status}'),
+                DetailRow.buildSeparator(),
+                DetailRow.buildDataRow('Gruppenzugehörigkeit:', user.adGruppen),
+                DetailRow.buildSeparator(),
+                DetailRow.buildDataRow('Verwendung:', user.verwendung),
+                DetailRow.buildSeparator(),
+                DetailRow.buildDataRow('Adresse:', user.adresse),
               ],
             ),
           ),
+    );
+  }
+  void _showAddUserPopup() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        final groupList = _groupViewModel.groups;
+
+        // Erstelle eine Instanz der UserRepository-Klasse
+        final userRepository = UserRepository();
+
+        return AddDataPopup<User>(
+          title: 'Neuen Nutzer hinzufügen',
+          attributeNames: [
+            'Vorname',
+            'Nachname',
+            'Anmeldename',
+            'Status',
+            'Verwendung',
+            'Adresse',
+          ],
+          onAddData: (newUser) async {
+            // Benutzer erstellen
+            try {
+              User createdUser = await userRepository.createUser(newUser);
+              // Hier kannst du weitere Aktionen ausführen, nachdem der Benutzer erstellt wurde
+              Navigator.of(context).pop();
+            } catch (e) {
+              // Fehler beim Erstellen des Benutzers behandeln
+              print('Fehler beim Erstellen des Benutzers: $e');
+            }
+          },
+          groupList: groupList,
+          caseSensitive: true,
+        );
+      },
     );
   }
 }

@@ -6,34 +6,37 @@ class User {
   String verwendung;
   String adGruppen;
   int status;
+  String groupIds;
 
   User({
-    this.nachname = '',
-    this.vorname = '',
-    this.anmeldename = '',
-    this.adresse = '',
-    this.verwendung = '',
-    this.adGruppen = '',
-    this.status = 0,
+    required this.nachname,
+    required this.vorname,
+    required this.anmeldename,
+    required this.adresse,
+    required this.verwendung,
+    required this.adGruppen,
+    required this.status,
+    required this.groupIds,
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-    nachname: json["Nachname"] ?? '',
-    vorname: json["Vorname"] ?? '',
-    anmeldename: json["Anmeldename"] ?? '',
-    adresse: json["Adresse"] ?? '',
-    verwendung: json["verwendung"] ?? '',
-    adGruppen: json["ADGruppen"] ?? '',
-    status: json["Status"] ?? '',
+    nachname: json["Nachname"],
+    vorname: json["Vorname"],
+    anmeldename: json["Anmeldename"],
+    adresse: json["Adresse"],
+    verwendung: json["verwendung"],
+    adGruppen: json["ADGruppen"],
+    status: json["Status"],
+    groupIds: json["groupIds"],
   );
 
   Map<String, dynamic> toJson() => {
-    "Nachname": nachname,
-    "Vorname": vorname,
-    "Anmeldename": anmeldename,
-    "Adresse": adresse,
-    "verwendung": verwendung,
-    "ADGruppen": adGruppen,
-    "Status": status,
+    "name": nachname,
+    "surname": vorname,
+    "login": anmeldename,
+    "mail": adresse,
+    "usage": verwendung,
+    "status": status,
+    "groups": groupIds,
   };
 }
