@@ -1,50 +1,84 @@
 import 'package:flutter/material.dart';
 import 'screens/homeScreen.dart';
-import 'screens/userScreen.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+import 'screens/loginScreen.dart';
+import 'screens/userScreenMain.dart';
+import 'screens/userScreenCreate.dart';
+import 'screens/settingScreen.dart';
+
+import 'data/auth.dart';
 
 void main() {
-
-  httpServer();
-
-  runApp(const MyApp());
-
+  runApp(App());
 }
 
-void httpServer() async {
-  final server = await HttpServer.bind('localhost', 8080);
-
-  print('Server gestartet: ${server.address.address}:${server.port}');
-
-  await for (var request in server) {
-    if (request.method == 'POST') {
-      var body = await request.transform(utf8.decoder).join();
-      var data = json.decode(body);
-
-      print('Empfangene Daten: $data');
-
-      // Hier kannst du weitere Überprüfungen oder Verarbeitungen durchführen
-
-      request.response.statusCode = 200;
-      request.response.close();
-    }
-  }
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class _AppState extends State<App> {
+  bool isLoggedIn = false;
 
   @override
+  void initState() {
+    super.initState();
+    checkToken();
+  }
+
+  void checkToken() async {
+    var authorization = Authorization();
+    isLoggedIn = await authorization.checkToken();
+    setState(() {});
+  }
+  @override
   Widget build(BuildContext context) {
+
+
+
     return MaterialApp(
-      title: 'My App',
-      initialRoute: '/',
+      title: 'Altratec-EDV',
+      theme: ThemeData(
+        brightness: Brightness.dark,
+
+
+        inputDecorationTheme: InputDecorationTheme(
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20.0),borderSide: BorderSide.none
+            ),
+            filled: true,
+            fillColor: Colors.grey.withOpacity(0.1)
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ButtonStyle(
+                padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                    EdgeInsets.symmetric(horizontal: 15.0,vertical: 15.0)
+                ),
+                shape: MaterialStateProperty.all<OutlinedBorder>(
+                    RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0)
+                    )
+                ),
+                backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+                foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
+                overlayColor: MaterialStateProperty.all<Color>(Colors.black26)
+            )
+        ),
+
+
+      ),
+
+      initialRoute: isLoggedIn ? '/' : '/login',
       routes: {
-        '/': (context) =>  HomeScreen(),
+        '/': (context) => isLoggedIn ? HomeScreen() : LoginScreen(),
+        '/home': (context) => HomeScreen(),
+        '/login': (context) => LoginScreen(),
         '/users': (context) => const UserScreen(),
+        '/users/new': (context) => const UserScreen(),
+        '/users/edit': (context) => const UserScreen(),
+        '/users/create': (context) => const UserCreateScreen(),
+        '/settings': (context) =>  ConfigScreen(),
       },
     );
   }
-}
 
+}

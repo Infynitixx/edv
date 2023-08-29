@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:edv/screens/userViewModel.dart';
-import 'package:edv/screens/groupViewModel.dart';
 import 'package:edv/model/user.dart';
 import 'package:edv/ui/listItem.dart';
 import 'package:edv/ui/detailRow.dart';
-import 'package:edv/ui/AddDataPopup.dart';
-import 'package:edv/data/userRepository.dart';
+
 
 class UserScreen extends StatefulWidget {
   const UserScreen({Key? key}) : super(key: key);
@@ -16,7 +14,7 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> {
   late final UserViewModel _userViewModel;
-  late final GroupViewModel _groupViewModel;
+
 
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
@@ -27,18 +25,12 @@ class _UserScreenState extends State<UserScreen> {
     _userViewModel = UserViewModel();
     _userViewModel.addListener(_onUserViewModelChanged);
     _userViewModel.loadUsers();
-
-    _groupViewModel = GroupViewModel();
-    _groupViewModel.addListener(_onGroupViewModelChanged);
-    _groupViewModel.loadGroups();
-
     _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
     _userViewModel.removeListener(_onUserViewModelChanged);
-    _groupViewModel.removeListener(_onGroupViewModelChanged);
     _searchController.removeListener(_onSearchChanged);
     super.dispose();
   }
@@ -47,9 +39,6 @@ class _UserScreenState extends State<UserScreen> {
     setState(() {});
   }
 
-  void _onGroupViewModelChanged() {
-    setState(() {});
-  }
 
   void _onSearchChanged() {
     setState(() {
@@ -64,6 +53,7 @@ class _UserScreenState extends State<UserScreen> {
         user.nachname.toLowerCase().contains(_searchTerm.toLowerCase()))
         .toList();
 
+
     return Scaffold(
       backgroundColor: Color(0xFF212121),
       appBar: AppBar(
@@ -77,6 +67,8 @@ class _UserScreenState extends State<UserScreen> {
                 return ListItem(
                   title: filteredUsers[index].vorname,
                   subtitle: filteredUsers[index].nachname,
+                  titleSize: 16,
+                  subtitleSize: 16,
                   onTap: () => _showUserDetails(filteredUsers[index]),
                 );
               },
@@ -86,25 +78,18 @@ class _UserScreenState extends State<UserScreen> {
           Padding(
             padding: EdgeInsets.only(left: 16, right: 96, bottom: 16),
             child: Container(
-              color: Color(0xFF212121),
+
               child: TextField(
                 controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Suche...',
-                  fillColor: Colors.white,
-                  filled: true,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
               ),
             ),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _showAddUserPopup(),
+        onPressed: () {
+          Navigator.pushNamed(context, '/users/create',);
+        },
         child: Icon(Icons.add),
       ),
     );
@@ -137,42 +122,6 @@ class _UserScreenState extends State<UserScreen> {
               ],
             ),
           ),
-    );
-  }
-  void _showAddUserPopup() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        final groupList = _groupViewModel.groups;
-
-        // Erstelle eine Instanz der UserRepository-Klasse
-        final userRepository = UserRepository();
-
-        return AddDataPopup<User>(
-          title: 'Neuen Nutzer hinzufügen',
-          attributeNames: [
-            'Vorname',
-            'Nachname',
-            'Anmeldename',
-            'Status',
-            'Verwendung',
-            'Adresse',
-          ],
-          onAddData: (newUser) async {
-            // Benutzer erstellen
-            try {
-              User createdUser = await userRepository.createUser(newUser);
-              // Hier kannst du weitere Aktionen ausführen, nachdem der Benutzer erstellt wurde
-              Navigator.of(context).pop();
-            } catch (e) {
-              // Fehler beim Erstellen des Benutzers behandeln
-              print('Fehler beim Erstellen des Benutzers: $e');
-            }
-          },
-          groupList: groupList,
-          caseSensitive: true,
-        );
-      },
     );
   }
 }

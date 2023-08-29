@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:edv/model/group.dart';
+import 'package:http/http.dart' as http;
 
 class AddDataPopup<T> extends StatefulWidget {
   final String title;
   final List<String> attributeNames;
-  final Function(T) onAddData;
+
   final List<Group> groupList;
+
   final bool caseSensitive;
 
   const AddDataPopup({
     required this.title,
     required this.attributeNames,
-    required this.onAddData,
+
     required this.groupList,
     this.caseSensitive = false,
   });
@@ -80,9 +82,9 @@ class _AddDataPopupState<T> extends State<AddDataPopup<T>> {
         TextButton(
           child: Text('Hinzufügen'),
           onPressed: () {
-            // Hier kannst du die Logik zum Hinzufügen der neuen Daten implementieren
-            // Attribute aus den Textfeldern und ausgewählte Gruppen verwenden
-            // ...
+            http.post(Uri.parse('https://025b-84-60-244-29.ngrok-free.app/api/user'),
+
+            body:{"id":1.toString(), "name":"Infintitxx"});
             Navigator.of(context).pop();
           },
         ),

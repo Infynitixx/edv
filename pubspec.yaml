@@ -32,6 +32,9 @@ dependencies:
     sdk: flutter
   provider: ^5.0.0
   http: ^1.1.0
+  shared_preferences: ^2.0.12
+  flutter_secure_storage: ^8.0.0
+  grouped_list: ^5.1.2
 
 
 

@@ -5,8 +5,17 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF212121),
       appBar: AppBar(
         title: Text('Home'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.pushNamed(context, '/settings');
+              },
+          ),
+        ],
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -17,21 +26,21 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               NavigationButton(
-                text: 'Nutzer',
+
                 icon: Icons.person,
                 onPressed: () {
                   Navigator.pushNamed(context, '/users');
                 },
               ),
               NavigationButton(
-                text: 'Gruppen',
+
                 icon: Icons.group,
                 onPressed: () {
                   // Aktion für Gruppen-Navigation
                 },
               ),
               NavigationButton(
-                text: 'Geräte',
+
                 icon: Icons.devices,
                 onPressed: () {
                   // Aktion für Geräte-Navigation
@@ -46,26 +55,27 @@ class HomeScreen extends StatelessWidget {
 }
 
 class NavigationButton extends StatelessWidget {
-  final String text;
+
   final IconData icon;
   final VoidCallback onPressed;
 
   const NavigationButton({
-    required this.text,
+
     required this.icon,
     required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
+    return IconButton(
       onPressed: onPressed,
-      icon: Icon(icon),
-      label: Text(text),
+      icon: Icon(icon, size: 40),
+
+
     );
   }
 
 
 
-
 }
+
