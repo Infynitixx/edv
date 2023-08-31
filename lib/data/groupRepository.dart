@@ -5,7 +5,7 @@ import 'package:edv/model/group.dart';
 
 class GroupRepository {
   Future<List<Group>> fetchGroups() async {
-    var response = await http.get(Uri.parse('http://192.168.178.107/api/group'));
+    var response = await http.get(Uri.parse('http://localhost/api/group'));
 
     List<Group> groups = [];
 

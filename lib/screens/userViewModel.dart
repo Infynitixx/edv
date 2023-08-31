@@ -12,7 +12,5 @@ class UserViewModel extends ChangeNotifier {
     final users = await _userRepository.fetchUsers();
     _users.addAll(users);
     notifyListeners();
-
-
   }
 }

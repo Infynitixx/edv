@@ -20,7 +20,7 @@ class UserRepository {
   }
 
   Future<User> createUser(User newUser) async {
-    var url = Uri.parse('https://d267-84-60-244-29.ngrok-free.app');
+    var url = Uri.parse('https://eoet0ncq43aokkb.m.pipedream.net');
 
     var response = await http.post(
       url,
@@ -33,7 +33,7 @@ class UserRepository {
       var createdUser = User.fromJson(createdUserJson);
       return createdUser;
     } else {
-      throw Exception('Keine Antwort vom Server!');
+      throw Exception('Failed to create user');
     }
   }
 }

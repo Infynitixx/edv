@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:edv/data/auth.dart';
+import 'package:edv/screens/loginViewModel.dart';
 import 'package:edv/model/login.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -8,8 +9,29 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  TextEditingController _urlController = TextEditingController();
   TextEditingController _usernameController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+
+  late final LoginViewModel _loginViewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _loginViewModel = LoginViewModel();
+    _loginViewModel.addListener(_onLoginViewModelChanged);
+    _loginViewModel.labelText;
+  }
+
+  @override
+  void dispose() {
+    _loginViewModel.removeListener(_onLoginViewModelChanged);
+    super.dispose();
+  }
+
+  void _onLoginViewModelChanged() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +54,36 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            TextField(
+              controller: _urlController,
+              decoration: InputDecoration(labelText: 'URL', hintText: 'URL eingeben'),
+            ),
+            SizedBox(height: 24.0),
+            ElevatedButton(
+              onPressed: () async{
+                int status = await onLoginButtonClicked();
+                if (status == 0){
+                  loginError("Falsche Anmelededaten!");
+                }
+              },
+              child: Text('URL eintragen'),
+            ),
+            FutureBuilder<String>(
+              future: _loginViewModel.labelText,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Text(snapshot.data ?? '');
+                }
+              },
+            ),
+            SizedBox(height: 32.0),
+
+
+
             TextField(
               controller: _usernameController,
               decoration: InputDecoration(labelText: 'E-Mail'),

@@ -9,14 +9,14 @@ class User {
   String groupIds;
 
   User({
-    required this.nachname,
-    required this.vorname,
-    required this.anmeldename,
-    required this.adresse,
-    required this.verwendung,
-    required this.adGruppen,
-    required this.status,
-    required this.groupIds,
+    this.nachname  = '',
+    this.vorname = '',
+    this.anmeldename = '',
+    this.adresse = '',
+    this.verwendung = '',
+    this.adGruppen = '',
+    this.status = 0,
+    this.groupIds = '',
   });
 
   factory User.fromJson(Map<String, dynamic> json) => User(
@@ -31,12 +31,13 @@ class User {
   );
 
   Map<String, dynamic> toJson() => {
-    "name": nachname,
-    "surname": vorname,
-    "login": anmeldename,
-    "mail": adresse,
-    "usage": verwendung,
-    "status": status,
-    "groups": groupIds,
+    "Nachname": nachname,
+    "Vorname": vorname,
+    "Anmeldename": anmeldename,
+    "Adresse": adresse,
+    "verwendung": verwendung,
+    "ADGruppen": adGruppen,
+    "Status": status,
+    "groupIds": groupIds,
   };
 }

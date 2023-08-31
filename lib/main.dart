@@ -4,7 +4,6 @@ import 'screens/loginScreen.dart';
 import 'screens/userScreenMain.dart';
 import 'screens/userScreenCreate.dart';
 import 'screens/settingScreen.dart';
-
 import 'data/auth.dart';
 
 void main() {

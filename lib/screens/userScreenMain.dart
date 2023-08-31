@@ -15,7 +15,6 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   late final UserViewModel _userViewModel;
 
-
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
