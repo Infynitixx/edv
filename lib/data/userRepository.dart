@@ -5,7 +5,7 @@ import 'package:edv/model/user.dart';
 
 class UserRepository {
   Future<List<User>> fetchUsers() async {
-    var response = await http.get(Uri.parse('http://192.168.178.107/api/user'));
+    var response = await http.get(Uri.parse('http://localhost/api/user'));
 
     List<User> users = [];
 

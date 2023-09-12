@@ -17,7 +17,7 @@ class Authorization{
     return token != null;
   }
   CheckLogin(Login login) async {
-    var url = Uri.parse('http://192.168.178.107/api/login');
+    var url = Uri.parse('http://localhost/api/login');
 
     var response = await http.post(
       url,

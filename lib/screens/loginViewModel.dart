@@ -1,13 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:edv/data/config.dart';
 
-
 class LoginViewModel extends ChangeNotifier {
   final Configuration _configuration = Configuration();
-  late Future<String> labelText; // Initialwert setzen
+  late String labelText = '';
 
   Future<void> fetchLabelText() async {
-    labelText = (await _configuration.urlLabel())! as Future<String>;
+    final label = await _configuration.urlLabel() ?? '';
+    labelText = label;
     notifyListeners();
+  }
+  Future<void> setUrl(String url) async {
+    await _configuration.setUrl(url);
+    notifyListeners();
+  }
+
+  Future<int> testUrl() async {
+    return await _configuration.testUrl();
   }
 }

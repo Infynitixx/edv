@@ -20,7 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _loginViewModel = LoginViewModel();
     _loginViewModel.addListener(_onLoginViewModelChanged);
-    _loginViewModel.labelText;
+    _loginViewModel.fetchLabelText(); // Methode aufrufen, um labelText zu initialisieren
+    _urlController.text = _loginViewModel.labelText;
   }
 
   @override
@@ -56,29 +57,50 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _urlController,
-              decoration: InputDecoration(labelText: 'URL', hintText: 'URL eingeben'),
+              decoration: InputDecoration(
+                labelText: _loginViewModel.labelText,
+                hintText: 'URL eingeben',
+              ),
             ),
             SizedBox(height: 24.0),
             ElevatedButton(
-              onPressed: () async{
-                int status = await onLoginButtonClicked();
-                if (status == 0){
-                  loginError("Falsche Anmelededaten!");
-                }
+              onPressed: () async {
+                String url = _urlController.text; // Den Inhalt des URL-Textfeldes abrufen
+                await _loginViewModel.setUrl(url); // setUrl mit dem abgerufenen URL aufrufen
+                Navigator.pushNamed(context, '/login');
               },
               child: Text('URL eintragen'),
             ),
-            FutureBuilder<String>(
-              future: _loginViewModel.labelText,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  return Text(snapshot.data ?? '');
-                }
+
+            SizedBox(height: 32.0),
+            ElevatedButton(
+              onPressed: () async {
+
+                int status = await _loginViewModel.testUrl();
+
+                String message = status == 1
+                    ? "Verbindung erfolgreich!"
+                    : "Verbindung fehlgeschlagen!";
+
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Verbindungstest'),
+                      content: Text(message),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text('OK'),
+                        ),
+                      ],
+                    );
+                  },
+                );
               },
+              child: Text('Verbindung testen'),
             ),
             SizedBox(height: 32.0),
 
